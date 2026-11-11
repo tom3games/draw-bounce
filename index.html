@@ -86,6 +86,10 @@
     font-family:"DotGothic16",sans-serif; font-size:14px; letter-spacing:1px; color:#bfe9ff; text-decoration:none; border-radius:10px;
     background:rgba(126,220,255,.08); border:1px solid rgba(126,220,255,.34); }
   #tmApp:active{ transform:translateY(2px); }
+  /* X のアプリの中: 下の帯（--inapp-bot）の分だけ描く範囲と札を上げる */
+  html.inapp-x #stage{ bottom:var(--inapp-bot,0px); }
+  html.inapp-x #overlay{ padding-bottom:calc(16px + var(--inapp-bot,0px)); }
+  @media (max-height:680px){ html.inapp-x .inner{ gap:8px; padding:14px 20px; } html.inapp-x #logo{ font-size:clamp(24px,6vh,36px); } html.inapp-x #logo .on{ margin-top:6px; } html.inapp-x .howlist{ gap:5px; } html.inapp-x .howrow{ font-size:11.5px; line-height:1.3; } html.inapp-x .howrow .ic{ flex-basis:26px; height:26px; } html.inapp-x .skinchip{ padding:4px 0 3px; } html.inapp-x .start{ padding:12px 40px; } }
 </style>
 <script>
 (function(){
@@ -139,11 +143,12 @@ const bbf=document.createElement('canvas'),bbx=bbf.getContext('2d'); let PXB=4; 
 let bgc=ctx;   // background draws into this ctx (redirected to the low-res buffer each frame)
 let W=420,H=820,DPR=1,SAT=0,MAXDPR=2;   // MAXDPR is lowered automatically on devices that can't keep up
 const _sap=document.createElement('div'); _sap.style.cssText='position:fixed;top:0;left:0;width:0;height:env(safe-area-inset-top,0px);pointer-events:none;visibility:hidden;'; document.body.appendChild(_sap);
-function fitCanvas(){ W=Math.max(300,Math.floor(window.innerWidth)); H=Math.max(360,Math.floor(window.innerHeight));
+function fitCanvas(){ W=Math.max(300,Math.floor(window.innerWidth)); H=Math.max(360,Math.floor(document.getElementById('stage').clientHeight||window.innerHeight));
   DPR=Math.min(window.devicePixelRatio||1,MAXDPR); SAT=_sap.offsetHeight||0;
   cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR); uic.width=Math.round(W*DPR); uic.height=Math.round(H*DPR);
   BBW=Math.max(1,Math.ceil(W/PXB)); BBH=Math.max(1,Math.ceil(H/PXB)); bbf.width=BBW; bbf.height=BBH; computeArena(); }
 window.addEventListener('resize',()=>{ fitCanvas(); checkRotate(); });
+window.addEventListener('load',()=>{ if(document.documentElement.classList.contains('inapp-x')) fitCanvas(); });   // X の印は support.js（後から読む）が付ける
 
 /* ---------- constants ---------- */
 const BALL_R=14, GRAV=0.125, MAXV=15, WALL_REST=0.62;
@@ -505,7 +510,7 @@ if(document.fonts&&document.fonts.load){ document.fonts.load('30px "Press Start 
 fitCanvas(); checkRotate(); showHome(); loop(); window.__jsUp=true; window.__dbReady=true;
 </script>
 <script src="tm.js?v=2" data-game="draw-bounce"></script>
-<script src="support.js?v=1" data-again="startBtn" data-ja="アイス" data-en="an ice cream"></script>
+<script src="support.js?v=2" data-again="startBtn" data-ja="アイス" data-en="an ice cream"></script>
 <script src="app.js?v=1" data-url="https://apps.apple.com/jp/app/id6787810613" data-again="startBtn"></script>
 </body>
 </html>
